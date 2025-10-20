@@ -5,10 +5,15 @@ export default function Footer() {
   return (
     <footer className="bg-[#1E4E9C] text-white py-12 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 items-center text-center sm:text-left">
-        {/* Logo + Tagline */}
-        <div>
-          <img src="/logo.png" alt="Smart Way Consultancy Logo" className="h-12 mx-auto sm:mx-0 mb-2" />
-          <p className="text-sm text-white/80 italic">Building Better Future Together</p>
+        {/* Company Name + Tagline */}
+        <div className="flex flex-col items-center sm:items-start gap-2">
+          <h1 className="text-xl sm:text-2xl font-semibold bg-gradient-to-r from-[#D4AF37] to-white bg-clip-text text-transparent tracking-wide">
+            SmartWay Consultancy
+          </h1>
+          <p className="text-sm sm:text-base text-white/70 italic animate-pulse">
+            Building Better Future Together
+          </p>
+          <div className="w-16 h-[2px] bg-gradient-to-r from-[#D4AF37]/60 to-white/30 rounded-full mt-1 animate-pulse" />
         </div>
 
         {/* Quick Links */}
@@ -31,7 +36,7 @@ export default function Footer() {
           <div className="flex justify-center sm:justify-start gap-4 mt-4">
             <Link href="https://linkedin.com" target="_blank">
               <svg className="w-5 h-5 fill-white hover:fill-[#D4AF37] transition" viewBox="0 0 24 24">
-                <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.7v2.2h.1c.7-1.3 2.4-2.7 5-2.7 5.3 0 6.3 3.5 6.3 8v8.5h-5V17c0-2.4-.1-5.5-3.3-5.5-3.3 0-3.8 2.6-3.8 5.3v7.2h-5V8z"/>
+                <path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.7v2.2h.1c.7-1.3 2.4-2.7 5-2.7 5.3 0 6.3 3.5 6.3 8v8.5h-5V17c0-2.4-.1-5.5-3.3-5.5-3.3 0-3.8 2.6-3.8 5.3v7.2h-5V8z" />
               </svg>
             </Link>
             <Link href="https://wa.me/971585678938" target="_blank">
@@ -41,7 +46,7 @@ export default function Footer() {
             </Link>
             <Link href="mailto:info@smartwayae.com">
               <svg className="w-5 h-5 fill-white hover:fill-[#D4AF37] transition" viewBox="0 0 24 24">
-                <path d="M12 13.065L.015 6.015A1.5 1.5 0 011.5 4.5h21a1.5 1.5 0 011.485 1.515L12 13.065zM0 8.25v11.25A1.5 1.5 0 001.5 21h21a1.5 1.5 0 001.5-1.5V8.25l-12 7.5-12-7.5z"/>
+                <path d="M12 13.065L.015 6.015A1.5 1.5 0 011.5 4.5h21a1.5 1.5 0 011.485 1.515L12 13.065zM0 8.25v11.25A1.5 1.5 0 001.5 21h21a1.5 1.5 0 001.5-1.5V8.25l-12 7.5-12-7.5z" />
               </svg>
             </Link>
           </div>
