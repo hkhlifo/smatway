@@ -5,6 +5,7 @@ import Link from "next/link";
 import Footer from "../components/Footer";
 import Image from "next/image";
 
+// The original data array remains unchanged
 const services = [
     {
         title: "Businessman Services",
@@ -38,6 +39,95 @@ const services = [
     },
 ];
 
+// ---
+
+/**
+ * New component to encapsulate the Framer Motion Hooks for each card.
+ * This solves the "React Hook cannot be called inside a callback" error.
+ * It takes the shared scroll progress, the service data, and its index.
+ */
+function ServiceCard({ service, idx, scrollYProgress }) {
+    // Hooks are called directly in the function component body (which is legal)
+    const start = idx / services.length;
+    const end = (idx + 1) / services.length;
+
+    const y = useTransform(scrollYProgress, [start, end], ["100%", "0%"]);
+    const opacity = useTransform(scrollYProgress, [start, end], [0, 1]);
+    const scale = useTransform(scrollYProgress, [start, end], [0.95, 1]);
+    const zIndex = useTransform(scrollYProgress, [start, end], [0, 10]);
+
+    const transforms = { y, opacity, scale, zIndex };
+
+    return (
+        <motion.div
+            key={idx}
+            style={transforms}
+            className={`absolute w-[90vw] sm:w-[70vw] h-[85vh] sm:h-[70vh] bg-gradient-to-br ${service.bg} backdrop-blur-md border border-[#eaeaea] rounded-2xl shadow-2xl p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between will-change-transform`}
+        >
+            {/* Svgs */}
+            <svg viewBox="0 0 200 200" className="absolute bottom-[-30px] left-[-30px] w-32 h-32 opacity-10 animate-pulse z-0">
+                <path fill="#D4AF37" d="M50,-60C65,-45,75,-25,70,-10C65,5,45,15,30,30C15,45,-5,65,-25,60C-45,55,-65,35,-70,10C-75,-15,-65,-45,-45,-60C-25,-75,5,-75,30,-70C55,-65,65,-45,50,-60Z" transform="translate(100 100)" />
+            </svg>
+            <svg viewBox="0 0 200 200" className="absolute top-[-20px] right-[-20px] w-24 h-24 opacity-10 animate-pulse z-0">
+                <path fill="#1E4E9C" d="M60,-60C75,-45,85,-25,80,-5C75,15,55,35,35,50C15,65,-5,65,-25,50C-45,35,-65,15,-60,-5C-55,-25,-35,-45,-15,-60C5,-75,25,-75,45,-60Z" transform="translate(100 100)" />
+            </svg>
+            {/* Centered SVGs */}
+            <svg viewBox="0 0 200 200" className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-20 animate-pulse z-0">
+                <path fill="#D4AF37" d="M55,-65C70,-50,80,-30,75,-10C70,10,50,30,30,45C10,60,-10,60,-30,45C-50,30,-70,10,-65,-10C-60,-30,-40,-50,-20,-65C0,-80,20,-80,40,-65Z" transform="translate(100 100)" />
+            </svg>
+            <svg viewBox="0 0 200 200" className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-32 h-32 opacity-10 animate-pulse z-0">
+                <path fill="#1E4E9C" d="M45,-55C60,-40,70,-20,65,0C60,20,40,40,20,55C0,70,-20,70,-40,55C-60,40,-70,20,-65,0C-60,-20,-40,-40,-20,-55C0,-70,20,-70,45,-55Z" transform="translate(100 100)" />
+            </svg>
+
+            {/* Left Side */}
+            <div className="flex flex-col justify-between h-full w-full sm:w-[50%] sm:pr-6 text-center sm:text-left">
+                {/* GIF */}
+                <div className="mx-auto mb-6 flex items-center justify-center rounded-xl border border-[#eaeaea] bg-white/60 backdrop-blur-sm p-3 shadow-sm sm:p-4 sm:shadow-md">
+                    <Image
+                        src={service.icon}
+                        alt={`${service.title} icon`}
+                        width={64}
+                        height={64}
+                        className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
+                        priority
+                    />
+                </div>
+                <div>
+                    <h3 className="text-lg sm:text-2xl font-semibold text-[#1E4E9C] mb-2 sm:mb-3">
+                        {service.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-[#2B2B2B] mb-2">
+                        {service.description}
+                    </p>
+                </div>
+                <p className="text-sm italic text-[#1E4E9C]/80">{service.tagline}</p>
+            </div>
+
+            {/* Right Side */}
+            <div className="w-full sm:w-[50%] h-full flex items-center justify-center mt-4 sm:mt-0 overflow-hidden rounded-[40px]">
+                <motion.img
+                    src={service.png}
+                    alt={`${service.title} visual`}
+                    // These animations are fine as they are not hooks
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-full h-full object-cover"
+                />
+                {/* CTA */}
+                <Link
+                    href={service.link}
+                    className="absolute bottom-4 sm:bottom-6 left-1/2 sm:left-auto transform sm:transform-none -translate-x-1/2 sm:translate-x-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#1E4E9C] to-[#D4AF37] text-white font-medium shadow-md hover:shadow-lg transition duration-300 hover:scale-[1.02] z-10"
+                >
+                    Explore
+                </Link>
+            </div>
+        </motion.div>
+    );
+}
+
+// ---
+
 export default function ServicesPage() {
     const containerRef = useRef(null);
     const { scrollYProgress } = useScroll({
@@ -45,17 +135,23 @@ export default function ServicesPage() {
         offset: ["start start", "end end"],
     });
 
+    /* The problematic 'transforms' block has been removed from here.
+    The useTransform calls are now inside the new ServiceCard component.
+    
+    The original problematic code was:
     const transforms = services.map((_, idx) => {
         const start = idx / services.length;
         const end = (idx + 1) / services.length;
 
         return {
-            y: useTransform(scrollYProgress, [start, end], ["100%", "0%"]),
+            // These calls were illegal inside a map callback
+            y: useTransform(scrollYProgress, [start, end], ["100%", "0%"]), 
             opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
             scale: useTransform(scrollYProgress, [start, end], [0.95, 1]),
             zIndex: useTransform(scrollYProgress, [start, end], [0, 10]),
         };
-    });
+    }); 
+    */
 
     return (
         <section className="relative bg-gradient-to-br from-white to-[#F9F9F9]">
@@ -67,7 +163,7 @@ export default function ServicesPage() {
                     transition={{ duration: 0.8 }}
                     className="relative z-10"
                 >
-                    <h2 className="text-5xl sm:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#1E4E9C] to-[#D4AF37] mb-6">
+                    <h2 className="text-4xl sm:text-5xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#1E4E9C] to-[#D4AF37] mb-6">
                         Comprehensive Business Solutions
                     </h2>
                     <p className="text-[#2B2B2B]/80 text-lg sm:text-xl mb-4 leading-relaxed">
@@ -128,70 +224,14 @@ export default function ServicesPage() {
             {/* Scroll-Reveal Cards */}
             <div ref={containerRef} className="relative h-[150vh] md:h-[200vh]">
                 <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
+                    {/* Now we map and pass the necessary props to the new component */}
                     {services.map((service, idx) => (
-                        <motion.div
+                        <ServiceCard
                             key={idx}
-                            style={transforms[idx]}
-                            className={`absolute w-[90vw] sm:w-[70vw] h-[85vh] sm:h-[70vh] bg-gradient-to-br ${service.bg} backdrop-blur-md border border-[#eaeaea] rounded-2xl shadow-2xl p-6 sm:p-10 flex flex-col sm:flex-row items-center justify-between will-change-transform`}
-                        >
-                            {/* Svgs */}
-                            <svg viewBox="0 0 200 200" className="absolute bottom-[-30px] left-[-30px] w-32 h-32 opacity-10 animate-pulse z-0">
-                                <path fill="#D4AF37" d="M50,-60C65,-45,75,-25,70,-10C65,5,45,15,30,30C15,45,-5,65,-25,60C-45,55,-65,35,-70,10C-75,-15,-65,-45,-45,-60C-25,-75,5,-75,30,-70C55,-65,65,-45,50,-60Z" transform="translate(100 100)" />
-                            </svg>
-                            <svg viewBox="0 0 200 200" className="absolute top-[-20px] right-[-20px] w-24 h-24 opacity-10 animate-pulse z-0">
-                                <path fill="#1E4E9C" d="M60,-60C75,-45,85,-25,80,-5C75,15,55,35,35,50C15,65,-5,65,-25,50C-45,35,-65,15,-60,-5C-55,-25,-35,-45,-15,-60C5,-75,25,-75,45,-60Z" transform="translate(100 100)" />
-                            </svg>
-                            {/* Centered SVGs */}
-                            <svg viewBox="0 0 200 200" className="absolute top-1/2 left-1/3 -translate-x-1/2 -translate-y-1/2 w-64 h-64 opacity-20 animate-pulse z-0">
-                                <path fill="#D4AF37" d="M55,-65C70,-50,80,-30,75,-10C70,10,50,30,30,45C10,60,-10,60,-30,45C-50,30,-70,10,-65,-10C-60,-30,-40,-50,-20,-65C0,-80,20,-80,40,-65Z" transform="translate(100 100)" />
-                            </svg>
-                            <svg viewBox="0 0 200 200" className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-32 h-32 opacity-10 animate-pulse z-0">
-                                <path fill="#1E4E9C" d="M45,-55C60,-40,70,-20,65,0C60,20,40,40,20,55C0,70,-20,70,-40,55C-60,40,-70,20,-65,0C-60,-20,-40,-40,-20,-55C0,-70,20,-70,45,-55Z" transform="translate(100 100)" />
-                            </svg>
-
-                            {/* Left Side */}
-                            <div className="flex flex-col justify-between h-full w-full sm:w-[50%] sm:pr-6 text-center sm:text-left">
-                                {/* GIF */}
-                                <div className="mx-auto mb-6 flex items-center justify-center rounded-xl border border-[#eaeaea] bg-white/60 backdrop-blur-sm p-3 shadow-sm sm:p-4 sm:shadow-md">
-                                    <Image
-                                        src={service.icon}
-                                        alt={`${service.title} icon`}
-                                        width={64}
-                                        height={64}
-                                        className="w-12 h-12 sm:w-16 sm:h-16 object-contain"
-                                        priority
-                                    />
-                                </div>
-                                <div>
-                                    <h3 className="text-lg sm:text-2xl font-semibold text-[#1E4E9C] mb-2 sm:mb-3">
-                                        {service.title}
-                                    </h3>
-                                    <p className="text-sm sm:text-base text-[#2B2B2B] mb-2">
-                                        {service.description}
-                                    </p>
-                                </div>
-                                <p className="text-sm italic text-[#1E4E9C]/80">{service.tagline}</p>
-                            </div>
-
-                            {/* Right Side */}
-                            <div className="w-full sm:w-[50%] h-full flex items-center justify-center mt-4 sm:mt-0 overflow-hidden rounded-[40px]">
-                                <motion.img
-                                    src={service.png}
-                                    alt={`${service.title} visual`}
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.6 }}
-                                    className="w-full h-full object-cover"
-                                />
-                                {/* CTA */}
-                                <Link
-                                    href={service.link}
-                                    className="absolute bottom-4 sm:bottom-6 left-1/2 sm:left-auto transform sm:transform-none -translate-x-1/2 sm:translate-x-0 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#1E4E9C] to-[#D4AF37] text-white font-medium shadow-md hover:shadow-lg transition duration-300 hover:scale-[1.02] z-10"
-                                >
-                                    Explore
-                                </Link>
-                            </div>
-                        </motion.div>
+                            service={service}
+                            idx={idx}
+                            scrollYProgress={scrollYProgress}
+                        />
                     ))}
                 </div>
             </div>

@@ -18,9 +18,9 @@ export default function Hero() {
                 muted
                 playsInline
                 style={{ scale, filter: blur }}
-                className="absolute top-0 left-0 w-full md:mt-9 h-full md:object-cover object-fill z-0"
+                className="absolute top-0 left-0 w-full md:mt-9 h-full object-cover z-0"
             >
-                <source src="/bg-video/smartway1.mp4" type="video/mp4" />
+                <source src="/bg-video/smartway.mp4" type="video/mp4" />
             </motion.video>
 
             {/* Glass Panel */}
